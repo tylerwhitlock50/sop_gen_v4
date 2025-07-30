@@ -10,7 +10,7 @@ from sqlalchemy import (
     Column, Integer, String, Text, DateTime, Boolean, Enum, ForeignKey, Table, JSON
 )
 from sqlalchemy.orm import relationship, declarative_base
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 
 Base = declarative_base()
@@ -24,10 +24,95 @@ class UserRoleEnum(str, enum.Enum):
     USER = 'user'
     UNLICENSED = 'unlicensed'
 
+class DocumentStatusEnum(str, enum.Enum):
+    DRAFT = 'draft'
+    TO_USER = 'to_user'
+    TO_REVIEWER = 'to_reviewer'
+    TO_LAY_REVIEWER = 'to_lay_reviewer'
+    APPROVED = 'approved'
+    PUBLISHED = 'published'
+    DELETED = 'deleted'
+    ARCHIVED = 'archived'
+
+class QuestionStatusEnum(str, enum.Enum):
+    OPEN = 'open'
+    ANSWERED = 'answered'
+    DECLINED = 'declined'
+
+class BlockTypeEnum(str, enum.Enum):
+    # Basic content blocks
+    TITLE = 'title'
+    DESCRIPTION = 'description'
+    SECTION_HEADER = 'section_header'
+    PARAGRAPH = 'paragraph'
+    
+    # Step-related blocks
+    STEP = 'step'
+    STEP_GROUP = 'step_group'
+    STEP_INSTRUCTION = 'step_instruction'
+    STEP_RESULT = 'step_result'
+    STEP_RESPONSIBLE = 'step_responsible'
+    
+    # Question blocks
+    QUESTION = 'question'
+    QUESTION_GROUP = 'question_group'
+    
+    # Metadata blocks
+    TAGS = 'tags'
+    TAG = 'tag'
+    METADATA_BLOCK = 'metadata'
+    ADDITIONAL_INFO = 'additional_info'
+    
+    # Safety and compliance blocks
+    PPE_REQUIRED = 'ppe_required'
+    SAFETY_NOTICE = 'safety_notice'
+    WARNING = 'warning'
+    CAUTION = 'caution'
+    
+    # Risk and control blocks
+    RISK_ASSESSMENT = 'risk_assessment'
+    CONTROL_ASSESSMENT = 'control_assessment'
+    CONTROL_MATRIX = 'control_matrix'
+    RISKS = 'risks'
+    CONTROLS = 'controls'
+    
+    # Document structure blocks
+    TABLE_OF_CONTENTS = 'table_of_contents'
+    APPENDIX = 'appendix'
+    REFERENCE = 'reference'
+    
+    # Media blocks
+    IMAGE = 'image'
+    VIDEO = 'video'
+    ATTACHMENT = 'attachment'
+    
+    # Interactive blocks
+    CHECKLIST = 'checklist'
+    FORM = 'form'
+    SIGNATURE = 'signature'
+
+class DocumentTypeEnum(str, enum.Enum):
+    SOP = 'sop'
+    PROCEDURE = 'procedure'
+    WORKFLOW = 'workflow'
+    CHECKLIST = 'checklist'
+    MANUAL = 'manual'
+    POLICY = 'policy'
+    GUIDELINE = 'guideline'
+    TEMPLATE = 'template'
+    OTHER = 'other'
+
+class DocumentTierEnum(str, enum.Enum):
+    FREE = 'free'
+    PRO = 'pro'
+    ENTERPRISE = 'enterprise'
+    CUSTOM = 'custom'
+
+# Legacy enums for backward compatibility
 class SopStatusEnum(str, enum.Enum):
-    USER = 'to_user'
-    REVIEWER = 'to_reviewer'
-    LAY_REVIEWER = 'to_lay_reviewer'
+    TO_USER = 'to_user'
+    TO_REVIEWER = 'to_reviewer'
+    TO_LAY_REVIEWER = 'to_lay_reviewer'
     APPROVED = 'approved'
     PUBLISHED = 'published'
     DELETED = 'deleted'
@@ -48,8 +133,8 @@ class Organization(Base):
     id = Column(Integer, primary_key=True)
     organization_name = Column(String, nullable=False)
     organization_description = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 class User(Base):
@@ -61,70 +146,75 @@ class User(Base):
     organization_id = Column(Integer, ForeignKey('organizations.id'))
     role = Column(Enum(UserRoleEnum), default=UserRoleEnum.USER)
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
-class SopTag(Base):
-    __tablename__ = 'sop_tags'
+class Tag(Base):
+    __tablename__ = 'tags'
 
     id = Column(Integer, primary_key=True)
     tag_name = Column(String, nullable=False)
     tag_description = Column(Text)
     organization_id = Column(Integer, ForeignKey('organizations.id'))
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
-class SopDocument(Base):
-    __tablename__ = 'sop_documents'
+# ───────────────────────────────────────────
+# NEW FLEXIBLE DOCUMENT MODELS
+# ───────────────────────────────────────────
+
+class Document(Base):
+    __tablename__ = 'documents'
 
     id = Column(Integer, primary_key=True)
-    document_key = Column(Integer, index=True)
-    version = Column(Integer)
+    document_key = Column(Integer, index=True)  # Shared ID across versions
+    version = Column(Integer, default=1)
     document_name = Column(String, nullable=False)
-    document_description = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    document_type = Column(Enum(DocumentTypeEnum), nullable=False)
+    document_tier = Column(Enum(DocumentTierEnum), default=DocumentTierEnum.FREE)
+    status = Column(Enum(DocumentStatusEnum), default=DocumentStatusEnum.DRAFT)
+    org_id = Column(Integer, ForeignKey('organizations.id'))
     created_by = Column(Integer, ForeignKey('users.id'))
     updated_by = Column(Integer, ForeignKey('users.id'))
-    status = Column(Enum(SopStatusEnum), default=SopStatusEnum.USER)
-    org_id = Column(Integer, ForeignKey('organizations.id'))
-    additional_info = Column(Text)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    published_at = Column(DateTime)
     metadata_json = Column(JSON, default={})
 
-    steps = relationship("SopStep", cascade="all, delete-orphan", back_populates="document")
-    questions = relationship("SopQuestion", cascade="all, delete-orphan", back_populates="document")
+    # Relationships
+    blocks = relationship("DocumentBlock", cascade="all, delete-orphan", back_populates="document", order_by="DocumentBlock.block_order")
+    tags = relationship("DocumentTag", cascade="all, delete-orphan", back_populates="document")
 
 
-class SopStep(Base):
-    __tablename__ = 'sop_steps'
-
-    id = Column(Integer, primary_key=True)
-    document_id = Column(Integer, ForeignKey('sop_documents.id'))
-    step_number = Column(Integer)
-    step_description = Column(Text)
-    step_instructions = Column(Text)
-    step_expected_result = Column(Text)
-    step_who_responsible = Column(String)
-    ppe_required = Column(Boolean, default=False)
-    step_image_url = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
-
-    document = relationship("SopDocument", back_populates="steps")
-
-
-class SopQuestion(Base):
-    __tablename__ = 'sop_questions'
+class DocumentBlock(Base):
+    __tablename__ = 'document_blocks'
 
     id = Column(Integer, primary_key=True)
-    document_id = Column(Integer, ForeignKey('sop_documents.id'))
-    question = Column(Text, nullable=False)
-    status = Column(Enum(SopQuestionStatusEnum), default=SopQuestionStatusEnum.OPEN)
-    answer = Column(Text)
-    answered_by = Column(Integer, ForeignKey('users.id'))
-    answered_at = Column(DateTime)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    document_id = Column(Integer, ForeignKey('documents.id'))
+    block_type = Column(Enum(BlockTypeEnum), nullable=False)
+    block_order = Column(Integer, nullable=False)  # For ordering blocks within a document
+    content = Column(JSON, nullable=False)  # Flexible content storage as JSON
+    metadata_json = Column(JSON, default={})
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_by = Column(Integer, ForeignKey('users.id'))
+    updated_by = Column(Integer, ForeignKey('users.id'))
+    is_active = Column(Boolean, default=True)
 
-    document = relationship("SopDocument", back_populates="questions")
+    # Relationships
+    document = relationship("Document", back_populates="blocks")
+
+
+class DocumentTag(Base):
+    __tablename__ = 'document_tags'
+
+    id = Column(Integer, primary_key=True)
+    document_id = Column(Integer, ForeignKey('documents.id'))
+    tag_id = Column(Integer, ForeignKey('tags.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    # Relationships
+    document = relationship("Document", back_populates="tags")
+    tag = relationship("Tag")
+

@@ -1,0 +1,22 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.5, pytest-8.4.1, pluggy-1.6.0
+rootdir: C:\Users\tylerw\netsuite_ai
+plugins: anyio-4.9.0, langsmith-0.4.8
+collected 11 items
+
+api\services\sop_service\tests\run_test.py .....                         [ 45%]
+api\services\sop_service\tests\test_sop_service_integration.py .....     [ 90%]
+api\tests\test_db_setup.py .                                             [100%]
+
+============================== warnings summary ===============================
+api\tests\test_db_setup.py:6
+  C:\Users\tylerw\netsuite_ai\api\tests\test_db_setup.py:6: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.asyncio
+
+api/services/sop_service/tests/run_test.py: 82 warnings
+api/services/sop_service/tests/test_sop_service_integration.py: 82 warnings
+  C:\Users\tylerw\netsuite_ai\venv\Lib\site-packages\sqlalchemy\sql\schema.py:3624: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================== 11 passed, 165 warnings in 0.54s =======================

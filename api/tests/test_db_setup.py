@@ -1,6 +1,7 @@
 from api.services.database import init_db
 import asyncio
 import pytest
+import pytest_asyncio
 from  api.services.logger import logger
 
 @pytest.mark.asyncio

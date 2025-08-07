@@ -1,0 +1,35 @@
+# Laboratory Safety Procedures
+**Type:** Sop | **Version:** 1 | **Status:** Draft
+**Created:** 2025-07-31
+
+## Table of Contents
+- Pre-Entry Procedures
+- Step 1: Check safety equipment
+- Step 2: Review hazard assessment
+
+---
+
+# Laboratory Safety Procedures
+
+This document outlines the safety procedures that must be followed when working in the laboratory.
+
+## Pre-Entry Procedures
+
+### Step 1: Check safety equipment
+
+**Instructions:** Ensure all safety equipment is available and in good condition before entering the laboratory.
+
+**Expected Result:** All safety equipment is verified and ready for use.
+
+**Responsible:** Laboratory technician
+
+⚠️ **PPE Required**
+
+### Step 2: Review hazard assessment
+
+**Instructions:** Review the hazard assessment for any experiments or procedures planned for the day.
+
+**Expected Result:** All hazards are identified and understood.
+
+**Responsible:** Laboratory supervisor
+

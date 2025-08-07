@@ -50,8 +50,10 @@ class TestSopServiceIntegration:
     
     def teardown_method(self):
         """Clean up test database"""
-        self.db_session.close()
-        Base.metadata.drop_all(self.engine)
+        # Commented out to preserve data for inspection
+        # self.db_session.close()
+        # Base.metadata.drop_all(self.engine)
+        print("🗄️ Database preserved for inspection - data will remain in database.db")
     
     def _create_test_data(self):
         """Create test organizations and users"""

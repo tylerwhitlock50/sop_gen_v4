@@ -1,0 +1,87 @@
+{
+  "document": {
+    "id": 6,
+    "document_key": 2001,
+    "version": 1,
+    "document_name": "Laboratory Safety Procedures",
+    "document_type": "sop",
+    "document_tier": "pro",
+    "status": "draft",
+    "created_at": "2025-07-31T19:26:32.723752",
+    "updated_at": "2025-07-31T19:26:32.723753",
+    "metadata": {}
+  },
+  "blocks": [
+    {
+      "id": 26,
+      "block_type": "title",
+      "block_order": 1,
+      "content": {
+        "text": "Laboratory Safety Procedures"
+      },
+      "metadata": {},
+      "created_at": "2025-07-31T19:26:32.733464",
+      "updated_at": "2025-07-31T19:26:32.733466"
+    },
+    {
+      "id": 27,
+      "block_type": "description",
+      "block_order": 2,
+      "content": {
+        "text": "This document outlines the safety procedures that must be followed when working in the laboratory."
+      },
+      "metadata": {},
+      "created_at": "2025-07-31T19:26:32.741292",
+      "updated_at": "2025-07-31T19:26:32.741294"
+    },
+    {
+      "id": 28,
+      "block_type": "section_header",
+      "block_order": 3,
+      "content": {
+        "text": "Pre-Entry Procedures"
+      },
+      "metadata": {},
+      "created_at": "2025-07-31T19:26:32.749880",
+      "updated_at": "2025-07-31T19:26:32.749882"
+    },
+    {
+      "id": 29,
+      "block_type": "step",
+      "block_order": 4,
+      "content": {
+        "content": "Step 1 content",
+        "metadata_json": {},
+        "step_number": 1,
+        "step_description": "Check safety equipment",
+        "step_instructions": "Ensure all safety equipment is available and in good condition before entering the laboratory.",
+        "step_expected_result": "All safety equipment is verified and ready for use.",
+        "step_who_responsible": "Laboratory technician",
+        "ppe_required": true,
+        "step_image_url": null
+      },
+      "metadata": {},
+      "created_at": "2025-07-31T19:26:32.756741",
+      "updated_at": "2025-07-31T19:26:32.756744"
+    },
+    {
+      "id": 30,
+      "block_type": "step",
+      "block_order": 5,
+      "content": {
+        "content": "Step 2 content",
+        "metadata_json": {},
+        "step_number": 2,
+        "step_description": "Review hazard assessment",
+        "step_instructions": "Review the hazard assessment for any experiments or procedures planned for the day.",
+        "step_expected_result": "All hazards are identified and understood.",
+        "step_who_responsible": "Laboratory supervisor",
+        "ppe_required": false,
+        "step_image_url": null
+      },
+      "metadata": {},
+      "created_at": "2025-07-31T19:26:32.765029",
+      "updated_at": "2025-07-31T19:26:32.765032"
+    }
+  ]
+}
